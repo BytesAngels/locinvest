@@ -9,6 +9,7 @@
         <script type="text/javascript" charset="utf-8" src="Externals/jq.mobi/ui/jq.ui.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="Externals/jq.mobi/plugins/jq.template.js"></script>
 		<script type="text/javascript" charset="utf-8" src="localDataBase.js"></script>
+		<script type="text/javascript" charset="utf-8" src="Externals/fastclick.js"></script>
 		<script type="text/javascript">                
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-34195216-1']);
@@ -20,6 +21,10 @@
 			})();
 		</script>
         <script type="text/javascript">
+			window.addEventListener('load', function() {
+				new FastClick(document.body);
+			}, false);
+			
 			$.ui.ready(function () {                
                 $.ui.removeFooterMenu();
                 $.ui.showBackbutton=false;
@@ -38,7 +43,7 @@
 								  "taxeFonciere:\"" 	+ row['taxeFonciere']	+ "\"," +
 								  "fraisGestion:\"" 	+ row['fraisGestion']	+ "\"}";
 					
-					$("#simulationsList").append("<li><a href='#simulation' touchstart='load(" + params + ");'>" + row['nom'] + "</a></li>");		
+					$("#simulationsList").append("<li><a href='#simulation' onclick='load(" + params + ");'>" + row['nom'] + "</a></li>");		
 				}
 			}
 			
@@ -82,7 +87,7 @@
 			
 			function confirmerSupprimer(){
                 $("#jQUi").actionsheet('<a href="javascript:;" >Annuler</a>'+
-									   '<a href="javascript:;" touchstart="supprimer();" >Supprimer</a>');
+									   '<a href="javascript:;" onclick="supprimer();" >Supprimer</a>');
             }
 			
 			function calculRentabilite() {
@@ -168,16 +173,16 @@
 				<header id="listeHeader">
 					<a href="#aide" class="button" style="float:left">Aide</a>
 					<h1>LOCINVEST</h1>
-					<a href="#simulation" touchstart="ajouter();" class="button" style="float:right">Nouveau</a>
+					<a href="#simulation" onclick="ajouter();" class="button" style="float:right">Nouveau</a>
 				</header>
 				<header id="aideHeader">
 					<a href="#liste" class='button' style="float:left">Retour</a>
 					<h1>AIDE</h1>
 				</header>
 				<header id="simuHeader">
-					<a href="#liste" touchstart="enregistrer();" class="button" style="float:left">Retour</a>
+					<a href="#liste" onclick="enregistrer();" class="button" style="float:left">Retour</a>
 					<h1>LOCINVEST</h1>
-					<a touchstart="confirmerSupprimer();" class="button" style="float:right">Supprimer</a>
+					<a onclick="confirmerSupprimer();" class="button" style="float:right">Supprimer</a>
 				</header>
             </div>			
         </div>		
