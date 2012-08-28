@@ -1,4 +1,4 @@
 locinvest
 ---
 
-Simulateur de rentabilit&eacute locative
+Simulateur de rentabilite locative

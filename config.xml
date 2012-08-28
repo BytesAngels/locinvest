@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns		= "http://www.w3.org/ns/widgets"
-	xmlns:gap	= "http://phonegap.com/ns/1.0"
-	id		= "com.bytesangels.locinvest"
-	version 	= "1.0.0">
-
+<widget xmlns		= "http://www.w3.org/ns/widgets" xmlns:gap	= "http://phonegap.com/ns/1.0" id = "com.bytesangels.locinvest"	version = "1.0.0">
 	<name>locinvest</name>
-
-	<description>
-		Simulateur de rentabilit&eacute locative
-	</description>
-
-	<author href="http:www.bytesangels.com"
-		email="god@bytesangels.com">
-		Jean Sahler
-	</author>
-
+	<description>Simulateur de rentabilite locative</description>
+	<author href="http:www.bytesangels.com"	email="god@bytesangels.com">Jean Sahler</author>
 	<icon src="icon.png" gap:role="default" />
-
-	<preference name="orientation" value="portrait" />
+	<preference name="orientation" value="default" />
+	<preference name="target-device" value="universal" />
+	<preference name="fullscreen" value="true" />
+	<preference name="show-splash-screen-spinner" value="true" />
+	<access origin="*" />
 </widget>
