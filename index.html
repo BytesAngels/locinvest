@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>LOCINVEST</title>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <link rel="stylesheet" type="text/css" href="Externals/jq.mobi/ui/jq.ui.css"/>
+        <script type="text/javascript" charset="utf-8" src="Externals/jq.mobi/ui/jq.ui.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="Externals/jq.mobi/plugins/jq.template.js"></script>
+		<script type="text/javascript" charset="utf-8" src="localDataBase.js"></script>
+		<script type="text/javascript">                
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-34195216-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+		</script>
+        <script type="text/javascript">
+			$.ui.ready(function () {                
+                $.ui.removeFooterMenu();
+                $.ui.showBackbutton=false;
+				initDatabase();
+				selectAll();
+            });
+			
+			function RafraichirList(results) {
+				$('#simulationsList').empty();
+				for (var i=0; i<results.rows.length; i++) {
+					var row = results.rows.item(i);		
+					var params = "{id:\"" 				+ row['id']				+ "\"," +
+								  "nom:\"" 				+ row['nom']			+ "\"," +
+								  "prixAcquisition:\""	+ row['prixAcquisition']+ "\"," +
+								  "loyerMensuel:\"" 	+ row['loyerMensuel']	+ "\"," +
+								  "taxeFonciere:\"" 	+ row['taxeFonciere']	+ "\"," +
+								  "fraisGestion:\"" 	+ row['fraisGestion']	+ "\"}";
+					
+					$("#simulationsList").append("<li><a href='#simulation' onClick='load(" + params + ");'>" + row['nom'] + "</a></li>");		
+				}
+			}
+			
+			function load(params) {
+				$("#template_simulation").html(tmpl("simu_info",{simu:params}));
+				calculRentabilite();
+			}
+			
+			function ajouter() {
+				var params = {
+					id				: $.uuid(),
+					nom				: "Simu",
+					prixAcquisition	: "",
+					loyerMensuel	: "",
+					taxeFonciere	: "",
+					fraisGestion	: ""
+				}
+				saveNew(params);
+				load(params);
+			}
+			
+			function enregistrer() {
+				var params = {
+					id:$("#id").val(),
+					nom:$("#nom").val(),
+					prixAcquisition:$("#prixAcquisition").val(),
+					loyerMensuel:$("#loyerMensuel").val(),
+					taxeFonciere:$("#taxeFonciere").val(),
+					fraisGestion:$("#fraisGestion").val()
+				};
+				
+				update(params);
+				selectAll();
+			}
+			
+			function supprimer() {
+				suppr($("#id").val());
+				selectAll();
+				$.ui.loadContent("#liste",false,false,"up");
+			}
+			
+			function confirmerSupprimer(){
+                $("#jQUi").actionsheet('<a href="javascript:;" >Annuler</a>'+
+									   '<a href="javascript:;" onclick="supprimer();" >Supprimer</a>');
+            }
+			
+			function calculRentabilite() {
+				var rB = "-";
+				var rN = "-";
+				
+				var loyerMensuel	= $("#loyerMensuel").val();
+				var prixAcquisition	= $("#prixAcquisition").val();
+				var taxeFonciere	= $("#taxeFonciere").val();
+				var fraisGestion	= $("#fraisGestion").val();
+				
+				if (loyerMensuel != "" && prixAcquisition != "") {
+					if (loyerMensuel >0 && prixAcquisition >0){
+						rB = Math.round(100*100*(12*loyerMensuel)/prixAcquisition)/100;
+						if (taxeFonciere != "" && fraisGestion != "") {
+							if (taxeFonciere >0 && fraisGestion >0) rN = Math.round(100*100*(12*loyerMensuel-taxeFonciere-fraisGestion)/prixAcquisition)/100;
+						}
+					}
+				}
+				
+				$("#rentabiliteBrute").text(rB + "%");
+				$("#rentabiliteNette").text(rN + "%");
+			}
+        </script>
+		<script type="text/html" id="simu_info">
+			<fieldset id="simuForm">
+				<legend>Simulation</legend>
+				<h4>Rentabilit&eacute brute : <text id="rentabiliteBrute"></h4><br/>
+				<h4>Rentabilit&eacute nette : <text id="rentabiliteNette"></h4><br/>
+				<input type="text" id="id" value="<%=simu.id%>" hidden/><br/>
+				Nom : <br>
+				<input type="text" id="nom" value="<%=simu.nom%>" class="jq-ui-forms"/><br/>
+				Prix d'Acquisition : <br/>
+				<input type="number" id="prixAcquisition" value="<%=simu.prixAcquisition%>" onChange="calculRentabilite()" class="jq-ui-forms"/><br/>
+				Loyer Mensuel : <br/>
+				<input type="number" id="loyerMensuel" value="<%=simu.loyerMensuel%>" onChange="calculRentabilite()" class="jq-ui-forms"/><br/>
+				Taxe Fonciere : <br/>
+				<input type="number" id="taxeFonciere" value="<%=simu.taxeFonciere%>" onChange="calculRentabilite()" class="jq-ui-forms"/><br/>
+				Frais de Gestion : <br/>
+				<input type="number" id="fraisGestion" value="<%=simu.fraisGestion%>" onChange="calculRentabilite()" class="jq-ui-forms"/>
+			</fieldset>			
+		</script>		
+    </head>     
+    <body>
+        <div id="jQUi">
+            <div id="content">
+                <div id="liste" class="panel" data-header="listeHeader" selected="true">
+					<script type="text/javascript"><!--
+						google_ad_client = "ca-pub-1930023614188964";
+						google_ad_slot = "1898617694";
+						google_ad_width = 640;
+						google_ad_height = 50;
+						//-->
+					</script>
+					<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+					 <ul id="simulationsList"></ul>
+                </div>
+                <div id="aide" class="panel" data-header="aideHeader" >
+					<script type="text/javascript"><!--
+						google_ad_client = "ca-pub-1930023614188964";
+						google_ad_slot = "1898617694";
+						google_ad_width = 640;
+						google_ad_height = 50;
+						//-->
+					</script>
+					<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+					<div>
+						LOCINVEST est un simulateur de rentabilit&eacute locative (brute et nette).<br/>
+						Cette application vout permettra de g&eacuterer une lise de simulation personnelle.
+					</div>
+                </div>
+                <div id="simulation" class="panel" data-header="simuHeader" >
+					<script type="text/javascript"><!--
+						google_ad_client = "ca-pub-1930023614188964";
+						google_ad_slot = "1898617694";
+						google_ad_width = 640;
+						google_ad_height = 50;
+						//-->
+					</script>
+					<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+					<div id='template_simulation'></div>
+                </div>				
+				<header id="listeHeader">
+					<a href="#aide" class="button" style="float:left">Aide</a>
+					<h1>LOCINVEST</h1>
+					<a href="#simulation" onclick="ajouter();" class="button" style="float:right">Nouveau</a>
+				</header>
+				<header id="aideHeader">
+					<a href="#liste" class='button' style="float:left">Retour</a>
+					<h1>AIDE</h1>
+				</header>
+				<header id="simuHeader">
+					<a href="#liste" onclick="enregistrer();" class="button" style="float:left">Retour</a>
+					<h1>LOCINVEST</h1>
+					<a onclick="confirmerSupprimer();" class="button" style="float:right">Supprimer</a>
+				</header>
+            </div>			
+        </div>		
+    </body>
+</html>
