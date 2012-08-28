@@ -38,7 +38,7 @@
 								  "taxeFonciere:\"" 	+ row['taxeFonciere']	+ "\"," +
 								  "fraisGestion:\"" 	+ row['fraisGestion']	+ "\"}";
 					
-					$("#simulationsList").append("<li><a href='#simulation' onClick='load(" + params + ");'>" + row['nom'] + "</a></li>");		
+					$("#simulationsList").append("<li><a href='#simulation' touchstart='load(" + params + ");'>" + row['nom'] + "</a></li>");		
 				}
 			}
 			
@@ -82,7 +82,7 @@
 			
 			function confirmerSupprimer(){
                 $("#jQUi").actionsheet('<a href="javascript:;" >Annuler</a>'+
-									   '<a href="javascript:;" onclick="supprimer();" >Supprimer</a>');
+									   '<a href="javascript:;" touchstart="supprimer();" >Supprimer</a>');
             }
 			
 			function calculRentabilite() {
@@ -168,16 +168,16 @@
 				<header id="listeHeader">
 					<a href="#aide" class="button" style="float:left">Aide</a>
 					<h1>LOCINVEST</h1>
-					<a href="#simulation" onclick="ajouter();" class="button" style="float:right">Nouveau</a>
+					<a href="#simulation" touchstart="ajouter();" class="button" style="float:right">Nouveau</a>
 				</header>
 				<header id="aideHeader">
 					<a href="#liste" class='button' style="float:left">Retour</a>
 					<h1>AIDE</h1>
 				</header>
 				<header id="simuHeader">
-					<a href="#liste" onclick="enregistrer();" class="button" style="float:left">Retour</a>
+					<a href="#liste" touchstart="enregistrer();" class="button" style="float:left">Retour</a>
 					<h1>LOCINVEST</h1>
-					<a onclick="confirmerSupprimer();" class="button" style="float:right">Supprimer</a>
+					<a touchstart="confirmerSupprimer();" class="button" style="float:right">Supprimer</a>
 				</header>
             </div>			
         </div>		
